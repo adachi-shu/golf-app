@@ -8,7 +8,7 @@ participant "LINE SDK" as LINE_SDK
 participant "LINE Platform" as LINE_Platform
 participant "Apple" as Apple
 participant "Google" as Google
-participant Firebase
+participant Firebase Authentication
 participant データベース
 
 == LINE Login ==
@@ -20,34 +20,10 @@ function -> LINE_Platform: GET /oauth2/v2.1/verify (accessToken)
 LINE_Platform --> function: success(client_id, expires_in)
 function -> LINE_Platform: GET /v2/profile (accessToken)
 LINE_Platform --> function: success(lineUserId, name, imageUrl)
-function -> Firebase: アカウント検索・登録(lineUserId)
-Firebase --> function: success(userID)
-function --> アプリ: success(userID)
-アプリ --> ユーザー: ログイン成功
-
-== Apple Login ==
-ユーザー -> アプリ: Appleでログイン
-アプリ -> Apple: ログイン
-Apple --> アプリ: success(authorizationCode)
-アプリ -> function: authorizationCode
-function -> Apple: POST /auth/token (authorizationCode)
-Apple --> function: success(idToken, appleUserId)
-function -> Firebase: アカウント検索・登録(appleUserId)
-Firebase --> function: success(userID)
-function --> アプリ: success(userID)
-アプリ --> ユーザー: ログイン成功
-
-== Google Login ==
-ユーザー -> アプリ: Googleでログイン
-アプリ -> Google: ログイン
-Google --> アプリ: success(認証コード)
-アプリ -> function: 認証コード
-function -> Google: アクセストークンリクエスト(認証コード)
-Google --> function: success(アクセストークン)
-function -> Google: ユーザー情報リクエスト(アクセストークン)
-Google --> function: success(googleUserId)
-function -> Firebase: アカウント検索・登録(googleUserId)
-Firebase --> function: success(userID)
+' TODO: もっと詳しく
+function -> Firebase Authentication: アカウント検索・登録(lineUserId)
+' TODO: userIDを変更
+Firebase Authentication --> function: success(userID)
 function --> アプリ: success(userID)
 アプリ --> ユーザー: ログイン成功
 @enduml
