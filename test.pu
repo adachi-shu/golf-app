@@ -1,29 +1,43 @@
 @startuml name
-title シーケンス図: LINE, Apple, Googleログイン with Firebase Auth and UserID
+title シーケンス図: LINEログインを使ってFirebase Authenticationに登録、ログイン
 
 actor ユーザー
 participant アプリ
-participant function
+participant "Firebase Function" as Firebase_Function
 participant "LINE SDK" as LINE_SDK
 participant "LINE Platform" as LINE_Platform
-participant "Apple" as Apple
-participant "Google" as Google
-participant Firebase Authentication
-participant データベース
+participant "Firebase Authentication" as Firebase_Authentication
+participant Firestore
 
-== LINE Login ==
 ユーザー -> アプリ: LINEでログイン
 アプリ -> LINE_SDK: ログイン
+activate LINE_SDK
 LINE_SDK --> アプリ: success(accessToken)
-アプリ -> function: accessToken
-function -> LINE_Platform: GET /oauth2/v2.1/verify (accessToken)
-LINE_Platform --> function: success(client_id, expires_in)
-function -> LINE_Platform: GET /v2/profile (accessToken)
-LINE_Platform --> function: success(lineUserId, name, imageUrl)
-' TODO: もっと詳しく
-function -> Firebase Authentication: アカウント検索・登録(lineUserId)
-' TODO: userIDを変更
-Firebase Authentication --> function: success(userID)
-function --> アプリ: success(userID)
-アプリ --> ユーザー: ログイン成功
+deactivate LINE_SDK
+アプリ -> Firebase_Function: accessToken
+activate Firebase_Function
+Firebase_Function -> LINE_Platform: GET /oauth2/v2.1/verify (accessToken)
+activate LINE_Platform
+LINE_Platform --> Firebase_Function: success(client_id, expires_in)
+deactivate LINE_Platform
+Firebase_Function --> Firebase_Function: client_id == LINE Login channel ID && expires_in > 0
+Firebase_Function -> LINE_Platform: GET /v2/profile (accessToken)
+activate LINE_Platform
+LINE_Platform --> Firebase_Function: success(lineUserId, name, imageUrl)
+deactivate LINE_Platform
+Firebase_Function -> Firebase_Authentication: createCustomToken(lineUserId)
+activate Firebase_Authentication
+Firebase_Authentication --> Firebase_Function: success(カスタムトークン)
+deactivate Firebase_Authentication
+deactivate Firebase_Function
+Firebase_Function --> アプリ: カスタムトークン
+アプリ -> Firebase_Authentication: signInWithCustomToken(カスタムトークン)
+activate Firebase_Authentication
+Firebase_Authentication --> アプリ: ログイン成功(userCredential.user.uid)
+deactivate Firebase_Authentication
+アプリ -> Firestore: ユーザー情報を取得(userCredential.user.uid)
+activate Firestore
+Firestore --> アプリ: ユーザー情報
+deactivate Firestore
+アプリ --> ユーザー: ログイン後の画面表示
 @enduml
