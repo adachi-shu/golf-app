@@ -27,6 +27,7 @@ export default function SelectPicker({
       itemStyle={{ color: "#000" }}
       selectionColor={"#fff"}
     >
+      <Picker.Item label={defaultValue} value={null} />
       {items.map((item) => (
         <Picker.Item key={item.value} label={item.label} value={item.value} />
       ))}

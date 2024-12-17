@@ -1,10 +1,34 @@
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { Shot } from "./app/(tabs)";
 
-export const createUser = async () => {
+type User = {
+  uid: string;
+  userName: string;
+};
+
+export const getUser = async (uid: string) => {
+  try {
+    const q = query(collection(db, "users"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs[0]?.id;
+  } catch (e) {
+    console.error("Error getting document: ", e);
+  }
+};
+
+export const createUser = async (user: User) => {
   try {
     const docRef = await addDoc(collection(db, "users"), {
-      userName: "adc",
+      userName: user.userName,
       clubsUsed: [
         "ドライバー",
         "4W",
@@ -18,18 +42,32 @@ export const createUser = async () => {
       ],
       ballsUsed: "HONMA D1",
       createdAt: new Date(),
+      uid: user.uid,
     });
-    console.log("Document written with ID: ", docRef.id);
+    return docRef.id;
   } catch (e) {
     console.error("Error adding document: ", e);
   }
 };
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (id: string) => {
   try {
-    const docRef = await getDoc(doc(db, "users", "eQqYHrrjTL5quX6Pf7rq"));
+    const docRef = await getDoc(doc(db, "users", id));
     console.log(docRef.data());
     return docRef.data();
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+export const addShot = async (userId: string, shot: Shot) => {
+  try {
+    const docRef = await addDoc(collection(db, "shots"), {
+      userId: userId,
+      ...shot,
+      createdAt: new Date(),
+    });
+    return docRef.id;
   } catch (e) {
     console.error("Error adding document: ", e);
   }

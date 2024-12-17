@@ -1,19 +1,20 @@
 import React from "react";
 import { View, Button, StyleSheet, Alert } from "react-native";
+import { useAuth } from "./AuthProvider";
 
 export default function LoginComponent() {
+  const { login, loginWithApple, loginWithLine } = useAuth();
   const handleLineLogin = () => {
-    Alert.alert("LINE Login", "LINE login functionality goes here.");
+    loginWithLine();
     // Implement LINE login logic here
   };
 
   const handleGoogleLogin = () => {
-    Alert.alert("Google Login", "Google login functionality goes here.");
     // Implement Google login logic here
   };
 
   const handleAppleLogin = () => {
-    Alert.alert("Apple Login", "Apple login functionality goes here.");
+    loginWithApple();
     // Implement Apple login logic here
   };
 
@@ -24,11 +25,7 @@ export default function LoginComponent() {
         onPress={handleLineLogin}
         color="#00C300"
       />
-      <Button
-        title="Googleでログイン"
-        onPress={handleGoogleLogin}
-        color="#4285F4"
-      />
+      <Button title="Googleでログイン" onPress={login} color="#4285F4" />
       <Button
         title="Appleでログイン"
         onPress={handleAppleLogin}
