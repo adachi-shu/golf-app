@@ -14,12 +14,15 @@ import {
   getAuth,
   getRedirectResult,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithPopup,
   signInWithRedirect,
   signOut,
 } from "firebase/auth";
 import LoginComponent from "./Login";
 import { getUser } from "@/adminFirestore";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import firebaseAuth from "@react-native-firebase/auth";
 
 interface AuthContextType {
   authUser?: AuthUser;
@@ -55,15 +58,48 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     return unsubscribe;
   }, []);
 
+  GoogleSignin.configure({
+    // google-services.jsonまたはGoogleService-Info.plistに記載されているCLIENT_ID
+    webClientId:
+      "4318045569-ph96gmrm7jcj5f09go6am0q0roao3rd2.apps.googleusercontent.com",
+  });
+
   const login = useCallback(async () => {
-    if (auth.currentUser) {
-      setAuthUser(auth.currentUser);
-      return;
-    }
+    // if (auth.currentUser) {
+    //   setAuthUser(auth.currentUser);
+    //   return;
+    // }
+    // try {
+    //   // await signInWithRedirect(auth, new GoogleAuthProvider());
+    //   // await GoogleSignin.hasPlayServices();
+    //   // const userInfo = await GoogleSignin.signIn();
+    //   // if (userInfo) {
+    //   //   await handleCredentialResponse(userInfo.idToken!);
+    //   // }
+    // } catch (error) {
+    //   console.error("Login error:", error);
+    // }
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (error) {
-      console.error("Login error:", error);
+      const user = await GoogleSignin.signIn();
+      const idToken = user.data?.idToken;
+
+      if (idToken === null) {
+        console.error("Google sign in error: idToken is null");
+      }
+
+      // IDトークンでサインインする
+      if (idToken !== undefined) {
+        const authCredential =
+          firebaseAuth.GoogleAuthProvider.credential(idToken);
+        const userCredential = await firebaseAuth().signInWithCredential(
+          authCredential
+        );
+        console.log(userCredential.user);
+      } else {
+        console.error("Google sign in error: idToken is undefined");
+      }
+    } catch (e) {
+      throw new Error("Firebase google login error: " + JSON.stringify(e));
     }
   }, [auth]);
 
@@ -81,6 +117,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [auth]);
 
   const loginWithLine = useCallback(async () => {
+    console.log("loginWithLine");
     const lineProvider = new OAuthProvider("oidc.line-login");
     await signInWithPopup(auth, lineProvider)
       .then((result) => {
@@ -91,7 +128,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
         }
       })
       .catch((error) => {
-        // Handle error.
+        console.error("Line login error:", error);
       });
   }, [auth]);
 
