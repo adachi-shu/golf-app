@@ -10,19 +10,19 @@ export const BallisticArrow = ({ onPress, selectedValue }: Props) => {
   return (
     <View style={styles.container}>
       <CustomRadioButton
-        label="↖"
-        selected={selectedValue === "↖"}
-        onSelect={() => onPress("↖")}
+        label="a"
+        selected={selectedValue === "a"}
+        onSelect={() => onPress("a")}
       />
       <CustomRadioButton
-        label="↑"
-        selected={selectedValue === "↑"}
-        onSelect={() => onPress("↑")}
+        label="b"
+        selected={selectedValue === "b"}
+        onSelect={() => onPress("b")}
       />
       <CustomRadioButton
-        label="↗"
-        selected={selectedValue === "↗"}
-        onSelect={() => onPress("↗")}
+        label="c"
+        selected={selectedValue === "c"}
+        onSelect={() => onPress("c")}
       />
     </View>
   );
@@ -47,7 +47,7 @@ const CustomRadioButton = ({
     onPress={onSelect}
   >
     <Text
-      style={[styles.radioButtonText, { color: selected ? "#FFF" : "#000" }]}
+      style={[styles.radioButtonText, { color: selected ? "#000" : "#000" }]}
     >
       {label}
     </Text>
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    width: 20,
   },
   radioButtonText: {
     fontSize: 16,

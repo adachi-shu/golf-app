@@ -1,4 +1,4 @@
-package com.adc.golfapp
+package com.golfapp
 
 import android.os.Build
 import android.os.Bundle

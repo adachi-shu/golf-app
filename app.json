@@ -12,10 +12,14 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.adc.golfapp",
       "usesAppleSignIn": true,
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
-      "package": "com.adc.golfapp"
+      "package": "com.adc.golfapp",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -55,6 +59,9 @@
       "eas": {
         "projectId": "d804f41c-94f9-423d-aeeb-af57fe7153a6"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d804f41c-94f9-423d-aeeb-af57fe7153a6"
     }
   }
 }

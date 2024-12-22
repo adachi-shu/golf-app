@@ -24,12 +24,17 @@ export default function SelectPicker({
       selectedValue={defaultValue}
       onValueChange={onValueChange}
       style={styles.picker}
-      itemStyle={{ color: "#000" }}
+      itemStyle={{ color: "#000", fontSize: 14, marginHorizontal: 2 }}
       selectionColor={"#fff"}
     >
-      <Picker.Item label={defaultValue} value={null} />
+      <Picker.Item label={defaultValue} value={null} style={styles.label} />
       {items.map((item) => (
-        <Picker.Item key={item.value} label={item.label} value={item.value} />
+        <Picker.Item
+          key={item.value}
+          label={item.label}
+          value={item.value}
+          style={styles.label}
+        />
       ))}
     </Picker>
   );
@@ -41,12 +46,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 10,
+    marginBottom: 5,
     color: "#1041a3",
   },
   picker: {
-    height: 50,
+    height: 150,
     width: 200,
   },
 });

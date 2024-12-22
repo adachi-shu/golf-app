@@ -2159,7 +2159,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - GoogleSignIn
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -2551,6 +2550,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: e6c2f5a192a47cd0c5523ec8c4f7eca01d15d077
 
-PODFILE CHECKSUM: f381d214c32de63e73aa7970ef7bb7d1496f9e63
+PODFILE CHECKSUM: 229af186b81d85cde4f7a6bd1bc59574c2947d2d
 
 COCOAPODS: 1.16.2

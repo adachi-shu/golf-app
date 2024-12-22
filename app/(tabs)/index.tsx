@@ -190,7 +190,7 @@ export default function GolfScoreCard() {
         </View>
         <Button title="▶" onPress={nextHole} />
       </View>
-      <View style={styles.section}>
+      <View style={styles.direction}>
         <Text style={styles.text}>使用クラブ</Text>
         <SelectPicker
           items={(userInfo?.clubsUsed || []).map((club) => ({
@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: 100,
     justifyContent: "space-between",
   },
   header: {
@@ -276,37 +277,34 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  section: {
-    alignItems: "center",
-    marginVertical: 8,
-  },
   direction: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 1,
   },
   directionColumn: {
     flexDirection: "column",
     justifyContent: "space-around",
-    marginVertical: 8,
+    marginVertical: 1,
+    gap: 1,
   },
   distance: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 8,
+    marginVertical: 2,
   },
   radioGroup: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 2,
   },
   buttons: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: 8,
+    marginVertical: 2,
   },
   footer: {
     flexDirection: "row",
@@ -325,6 +323,6 @@ const styles = StyleSheet.create({
   },
   radio: {
     fontSize: 24,
-    marginHorizontal: 4,
+    marginHorizontal: 2,
   },
 });

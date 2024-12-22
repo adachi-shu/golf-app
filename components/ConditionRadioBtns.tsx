@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    marginVertical: 8,
+    marginVertical: 2,
     borderWidth: 1,
     borderColor: "#007BFF",
     flexDirection: "row",
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   radioButtonText: {
-    fontSize: 16,
+    fontSize: 12,
   },
 });

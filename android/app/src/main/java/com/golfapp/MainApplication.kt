@@ -1,4 +1,4 @@
-package com.adc.golfapp
+package com.golfapp
 
 import android.app.Application
 import android.content.res.Configuration

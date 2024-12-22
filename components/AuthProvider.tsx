@@ -46,12 +46,13 @@ interface Props {
 }
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [authUser, setAuthUser] = useState<AuthUser>();
+  const [authUser, setAuthUser] = useState<AuthUser | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
   const auth = useMemo(() => getAuth(), []);
   const [userId, setUserId] = useState();
 
   useEffect(() => {
+    console.log("AuthProvider useEffect", auth);
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setAuthUser(user ?? undefined);
     });
@@ -94,7 +95,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
         const userCredential = await firebaseAuth().signInWithCredential(
           authCredential
         );
-        console.log(userCredential.user);
+        setAuthUser(userCredential.user);
       } else {
         console.error("Google sign in error: idToken is undefined");
       }
@@ -104,10 +105,6 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [auth]);
 
   const loginWithApple = useCallback(async () => {
-    if (auth.currentUser) {
-      setAuthUser(auth.currentUser);
-      return;
-    }
     try {
       const provider = new OAuthProvider("apple.com");
       await signInWithPopup(auth, provider);
