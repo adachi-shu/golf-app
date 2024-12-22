@@ -46,7 +46,7 @@ interface Props {
 }
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [authUser, setAuthUser] = useState<AuthUser | undefined>();
+  const [authUser, setAuthUser] = useState<any>();
   const [isInitialized, setIsInitialized] = useState(false);
   const auth = useMemo(() => getAuth(), []);
   const [userId, setUserId] = useState();
