@@ -267,6 +267,8 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 100,
     justifyContent: "space-between",
+    width: 414,
+    margin: "auto",
   },
   header: {
     flexDirection: "row",

@@ -70,38 +70,34 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     //   setAuthUser(auth.currentUser);
     //   return;
     // }
-    // try {
-    //   // await signInWithRedirect(auth, new GoogleAuthProvider());
-    //   // await GoogleSignin.hasPlayServices();
-    //   // const userInfo = await GoogleSignin.signIn();
-    //   // if (userInfo) {
-    //   //   await handleCredentialResponse(userInfo.idToken!);
-    //   // }
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    // }
     try {
-      const user = await GoogleSignin.signIn();
-      const idToken = user.data?.idToken;
-
-      if (idToken === null) {
-        console.error("Google sign in error: idToken is null");
-      }
-
-      // IDトークンでサインインする
-      if (idToken !== undefined) {
-        const authCredential =
-          firebaseAuth.GoogleAuthProvider.credential(idToken);
-        const userCredential = await firebaseAuth().signInWithCredential(
-          authCredential
-        );
-        setAuthUser(userCredential.user);
-      } else {
-        console.error("Google sign in error: idToken is undefined");
-      }
-    } catch (e) {
-      throw new Error("Firebase google login error: " + JSON.stringify(e));
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (error) {
+      console.error("Login error:", error);
     }
+
+    // モバイルアプリ用
+    // try {
+    //   const user = await GoogleSignin.signIn();
+    //   const idToken = user.data?.idToken;
+
+    //   if (idToken === null) {
+    //     console.error("Google sign in error: idToken is null");
+    //   }
+
+    //   if (idToken !== undefined) {
+    //     const authCredential =
+    //       firebaseAuth.GoogleAuthProvider.credential(idToken);
+    //     const userCredential = await firebaseAuth().signInWithCredential(
+    //       authCredential
+    //     );
+    //     setAuthUser(userCredential.user);
+    //   } else {
+    //     console.error("Google sign in error: idToken is undefined");
+    //   }
+    // } catch (e) {
+    //   throw new Error("Firebase google login error: " + JSON.stringify(e));
+    // }
   }, [auth]);
 
   const loginWithApple = useCallback(async () => {
