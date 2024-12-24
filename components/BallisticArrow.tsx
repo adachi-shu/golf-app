@@ -10,19 +10,19 @@ export const BallisticArrow = ({ onPress, selectedValue }: Props) => {
   return (
     <View style={styles.container}>
       <CustomRadioButton
-        label="a"
-        selected={selectedValue === "a"}
-        onSelect={() => onPress("a")}
+        label="↖"
+        selected={selectedValue === "↖"}
+        onSelect={() => onPress("↖")}
       />
       <CustomRadioButton
-        label="b"
-        selected={selectedValue === "b"}
-        onSelect={() => onPress("b")}
+        label="↑"
+        selected={selectedValue === "↑"}
+        onSelect={() => onPress("↑")}
       />
       <CustomRadioButton
-        label="c"
-        selected={selectedValue === "c"}
-        onSelect={() => onPress("c")}
+        label="↗"
+        selected={selectedValue === "↗"}
+        onSelect={() => onPress("↗")}
       />
     </View>
   );
