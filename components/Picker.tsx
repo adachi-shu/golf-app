@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     color: "#1041a3",
   },
   picker: {
-    height: 150,
-    width: 200,
+    height: "auto",
+    width: "100%",
   },
 });

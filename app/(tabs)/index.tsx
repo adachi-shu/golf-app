@@ -1,4 +1,10 @@
-import { addShot, createUser, getUser, getUserInfo } from "@/adminFirestore";
+import {
+  addPutter,
+  addShot,
+  createUser,
+  getUser,
+  getUserInfo,
+} from "@/adminFirestore";
 import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
@@ -15,6 +21,7 @@ import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
 import RadioGroupComponent from "@/components/RadioGroup";
 import BallisticArrow from "../../components/BallisticArrow";
 import ConditionRadioBtns from "@/components/ConditionRadioBtns";
+import PutterScoreModal from "@/components/PutterScoreModal";
 
 export type Shot = {
   club: string;
@@ -27,6 +34,11 @@ export type Shot = {
   leftFoot: string | undefined;
 };
 
+export type Putter = {
+  strokes: number;
+  hole: number;
+};
+
 export default function GolfScoreCard() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -37,6 +49,7 @@ export default function GolfScoreCard() {
   const [leftFootSelectedId, setLeftFootSelectedId] = useState<
     string | undefined
   >(undefined);
+  const [displayPutterScoreModal, setDisplayPutterScoreModal] = useState(false);
 
   const [startBallistic, setStartBallistic] = useState<string | undefined>(
     undefined
@@ -45,6 +58,7 @@ export default function GolfScoreCard() {
     undefined
   );
   const [condition, setCondition] = useState<string | undefined>(undefined);
+  const [putterScore, setPutterScore] = useState<number | undefined>(undefined);
 
   const handleClubChange = (value: string) => {
     setSelectedClub(value);
@@ -167,97 +181,123 @@ export default function GolfScoreCard() {
     setCondition(value);
   };
 
+  const handlePutterScore = (value: number) => {
+    setPutterScore(value);
+  };
+
+  const putterModalOpen = () => {
+    setDisplayPutterScoreModal(true);
+  };
+
+  const putterModalClose = () => {
+    setDisplayPutterScoreModal(false);
+  };
+
   const nextHole = () => {
+    const putter: Putter = {
+      strokes: putterScore || 0,
+      hole: hole,
+    };
+    addPutter(userId || "", putter);
     setHole(hole + 1);
     setStrokes(1);
     resetForm();
   };
 
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.header}>
+    <>
+      <View style={styles.container}>
+        {/* <View style={styles.header}>
         <Text style={styles.text}>end</Text>
         <Text style={styles.text}>スコアボード</Text>
       </View> */}
-      <View style={styles.holeInfo}>
-        <Button title="◀" onPress={() => {}} />
-        <View style={styles.directionColumn}>
-          <View style={styles.direction}>
-            <Text style={styles.text}>Par5</Text>
-            <Text style={styles.text}>{hole}H</Text>
-          </View>
-          <Text style={styles.text}>{strokes}打目</Text>
-        </View>
-        <Button title="▶" onPress={nextHole} />
-      </View>
-      <View style={styles.direction}>
-        <Text style={styles.text}>使用クラブ</Text>
-        <SelectPicker
-          items={(userInfo?.clubsUsed || []).map((club) => ({
-            label: club,
-            value: club,
-          }))}
-          placeholder=""
-          defaultValue={selectedClub}
-          onValueChange={handleClubChange}
-        />
-      </View>
-      <View style={styles.direction}>
-        <View style={styles.direction}>
+        <View style={styles.holeInfo}>
           <View style={styles.directionColumn}>
-            <BallisticArrow
-              selectedValue={startBallistic}
-              onPress={handleStartBallistic}
-            />
-            <BallisticArrow
-              selectedValue={endBallistic}
-              onPress={handleEndBallistic}
-            />
+            <View style={styles.direction}>
+              <Text style={styles.text}>Par5</Text>
+              <Text style={styles.text}>{hole}H</Text>
+            </View>
+            <Text style={styles.text}>{strokes}打目</Text>
+          </View>
+          <Button title="hole out" onPress={putterModalOpen} />
+        </View>
+        <View style={styles.direction}>
+          <Text style={styles.text}>使用クラブ</Text>
+          <SelectPicker
+            items={(userInfo?.clubsUsed || []).map((club) => ({
+              label: club,
+              value: club,
+            }))}
+            placeholder=""
+            defaultValue={selectedClub}
+            onValueChange={handleClubChange}
+          />
+        </View>
+        <View style={styles.direction}>
+          <View style={styles.direction}>
+            <View style={styles.directionColumn}>
+              <BallisticArrow
+                selectedValue={startBallistic}
+                onPress={handleStartBallistic}
+              />
+              <BallisticArrow
+                selectedValue={endBallistic}
+                onPress={handleEndBallistic}
+              />
+            </View>
+          </View>
+          <View style={styles.distance}>
+            <Text style={styles.text}>飛距離</Text>
+            <TextInput style={styles.input} defaultValue="100" />
+            <Text style={styles.text}>Y</Text>
           </View>
         </View>
-        <View style={styles.distance}>
-          <Text style={styles.text}>飛距離</Text>
-          <TextInput style={styles.input} defaultValue="100" />
-          <Text style={styles.text}>Y</Text>
+        <View style={styles.directionColumn}>
+          <Text style={styles.text}>つま先</Text>
+          <View style={styles.direction}>
+            <Text style={styles.text}>下がり</Text>
+            <RadioGroupComponent
+              radioButtons={upDownRadioBtn}
+              onPress={setToeSelectedId}
+              selectedId={toeSelectedId}
+              layout="row"
+            />
+            <Text style={styles.text}>上がり</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.directionColumn}>
-        <Text style={styles.text}>つま先</Text>
-        <View style={styles.direction}>
-          <Text style={styles.text}>下がり</Text>
-          <RadioGroupComponent
-            radioButtons={upDownRadioBtn}
-            onPress={setToeSelectedId}
-            selectedId={toeSelectedId}
-            layout="row"
+        <View style={styles.directionColumn}>
+          <Text style={styles.text}>左足</Text>
+          <View style={styles.direction}>
+            <Text style={styles.text}>下がり</Text>
+            <RadioGroupComponent
+              radioButtons={upDownRadioBtn}
+              onPress={setLeftFootSelectedId}
+              selectedId={leftFootSelectedId}
+              layout="row"
+            />
+            <Text style={styles.text}>上がり</Text>
+          </View>
+        </View>
+        <View style={styles.buttons}>
+          <ConditionRadioBtns
+            onPress={handleCondition}
+            selectedValue={condition}
           />
-          <Text style={styles.text}>上がり</Text>
+        </View>
+        <View style={styles.footer}>
+          <Button title="保存" onPress={handleShotSave} />
+          <Button title="リセット" onPress={resetForm} />
         </View>
       </View>
-      <View style={styles.directionColumn}>
-        <Text style={styles.text}>左足</Text>
-        <View style={styles.direction}>
-          <Text style={styles.text}>下がり</Text>
-          <RadioGroupComponent
-            radioButtons={upDownRadioBtn}
-            onPress={setLeftFootSelectedId}
-            selectedId={leftFootSelectedId}
-            layout="row"
-          />
-          <Text style={styles.text}>上がり</Text>
-        </View>
-      </View>
-      <View style={styles.buttons}>
-        <ConditionRadioBtns
-          onPress={handleCondition}
-          selectedValue={condition}
+      {displayPutterScoreModal && (
+        <PutterScoreModal
+          onChangePutterScore={handlePutterScore}
+          selectedValue={putterScore}
+          onClose={putterModalClose}
+          onSave={nextHole}
         />
-      </View>
-      <View style={styles.footer}>
-        <Button title="保存" onPress={handleShotSave} />
-        <Button title="リセット" onPress={resetForm} />
-      </View>
-    </View>
+      )}
+    </>
   );
 }
 
@@ -267,7 +307,8 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 100,
     justifyContent: "space-between",
-    width: 414,
+    width: "90%",
+    maxWidth: 414,
     margin: "auto",
   },
   header: {

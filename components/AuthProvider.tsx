@@ -23,6 +23,7 @@ import LoginComponent from "./Login";
 import { getUser } from "@/adminFirestore";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import firebaseAuth from "@react-native-firebase/auth";
+import { authData } from "@/firebaseConfig";
 
 interface AuthContextType {
   authUser?: AuthUser;
@@ -46,24 +47,21 @@ interface Props {
 }
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [authUser, setAuthUser] = useState<any>();
+  const [authUser, setAuthUser] = useState<AuthUser | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
-  const auth = useMemo(() => getAuth(), []);
-  const [userId, setUserId] = useState();
+  const auth = useMemo(() => authData, []);
 
   useEffect(() => {
-    console.log("AuthProvider useEffect", auth);
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setAuthUser(user ?? undefined);
     });
     return unsubscribe;
   }, []);
 
-  GoogleSignin.configure({
-    // google-services.jsonまたはGoogleService-Info.plistに記載されているCLIENT_ID
-    webClientId:
-      "4318045569-ph96gmrm7jcj5f09go6am0q0roao3rd2.apps.googleusercontent.com",
-  });
+  // GoogleSignin.configure({
+  //   // google-services.jsonまたはGoogleService-Info.plistに記載されているCLIENT_ID
+  //   webClientId: "",
+  // });
 
   const login = useCallback(async () => {
     // if (auth.currentUser) {

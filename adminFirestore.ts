@@ -8,7 +8,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
-import { Shot } from "./app/(tabs)";
+import { Putter, Shot } from "./app/(tabs)";
 
 type User = {
   uid: string;
@@ -65,6 +65,19 @@ export const addShot = async (userId: string, shot: Shot) => {
     const docRef = await addDoc(collection(db, "shots"), {
       userId: userId,
       ...shot,
+      createdAt: new Date(),
+    });
+    return docRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+export const addPutter = async (userId: string, putter: Putter) => {
+  try {
+    const docRef = await addDoc(collection(db, "putters"), {
+      userId: userId,
+      ...putter,
       createdAt: new Date(),
     });
     return docRef.id;
