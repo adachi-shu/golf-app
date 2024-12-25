@@ -16,11 +16,22 @@ type User = {
   userName: string;
 };
 
+export type UserInfoType = {
+  userName: string;
+  clubsUsed: string[];
+  ballsUsed: string;
+  createdAt: Date;
+  uid: string;
+};
+
 export const getUser = async (uid: string) => {
   try {
     const q = query(collection(db, "users"), where("uid", "==", uid));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs[0]?.id;
+    return {
+      id: querySnapshot.docs[0]?.id,
+      data: querySnapshot.docs[0]?.data(),
+    };
   } catch (e) {
     console.error("Error getting document: ", e);
   }
@@ -28,7 +39,7 @@ export const getUser = async (uid: string) => {
 
 export const createUser = async (user: User) => {
   try {
-    const docRef = await addDoc(collection(db, "users"), {
+    const data: UserInfoType = {
       userName: user.userName,
       clubsUsed: [
         "ドライバー",
@@ -44,8 +55,9 @@ export const createUser = async (user: User) => {
       ballsUsed: "HONMA D1",
       createdAt: new Date(),
       uid: user.uid,
-    });
-    return docRef.id;
+    };
+    const docRef = await addDoc(collection(db, "users"), data);
+    return { id: docRef.id, data };
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -61,12 +73,13 @@ export const getUserInfo = async (id: string) => {
   }
 };
 
-export const addShot = async (userId: string, shot: Shot) => {
+export const addShot = async (userId: string, shot: Shot, roundId: string) => {
   try {
     const docRef = await addDoc(collection(db, "shots"), {
       userId: userId,
       ...shot,
       createdAt: new Date(),
+      roundId: roundId,
     });
     return docRef.id;
   } catch (e) {
@@ -74,12 +87,17 @@ export const addShot = async (userId: string, shot: Shot) => {
   }
 };
 
-export const addPutter = async (userId: string, putter: Putter) => {
+export const addPutter = async (
+  userId: string,
+  putter: Putter,
+  roundId: string
+) => {
   try {
     const docRef = await addDoc(collection(db, "putters"), {
       userId: userId,
       ...putter,
       createdAt: new Date(),
+      roundId: roundId,
     });
     return docRef.id;
   } catch (e) {
@@ -87,15 +105,39 @@ export const addPutter = async (userId: string, putter: Putter) => {
   }
 };
 
-export const addRoundSetting = async (roundSetting: RoundSettingProps) => {
+export const addRoundSetting = async (
+  userId: string,
+  roundSetting: RoundSettingProps
+) => {
   try {
     const docRef = await addDoc(collection(db, "roundSettings"), {
-      // userId: userId,
+      userId: userId,
       ...roundSetting,
       createdAt: new Date(),
     });
     return docRef.id;
   } catch (e) {
     console.error("Error adding document: ", e);
+  }
+};
+
+export const getShotsInRound = async (roundId: string, userId: string) => {
+  try {
+    const q = query(
+      collection(db, "shots"),
+      where("roundId", "==", roundId),
+      where("userId", "==", userId)
+    );
+    const querySnapshot = await getDocs(q);
+    const result = querySnapshot.docs.map((doc) => doc.data()) as Shot[];
+    const sortedResult = result.sort((a, b) => {
+      if (a.hole === b.hole) {
+        return a.strokes - b.strokes;
+      }
+      return a.hole - b.hole;
+    });
+    return sortedResult;
+  } catch (e) {
+    console.error("Error getting document: ", e);
   }
 };

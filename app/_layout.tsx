@@ -13,6 +13,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import AuthProvider from "@/components/AuthProvider";
+import UserProvider from "@/components/UserProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -35,15 +36,20 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider value={DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(index)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="roundSetting" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar hidden={true} />
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(index)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="roundSetting"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar hidden={true} />
+        </ThemeProvider>
+      </UserProvider>
     </AuthProvider>
   );
 }

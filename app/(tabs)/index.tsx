@@ -1,27 +1,13 @@
-import {
-  addPutter,
-  addShot,
-  createUser,
-  getUser,
-  getUserInfo,
-} from "@/adminFirestore";
-import React, { useEffect, useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { addPutter, addShot } from "@/adminFirestore";
+import React, { useState, useMemo } from "react";
+import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import SelectPicker from "../../components/Picker";
-import { UserInfo } from "@/types";
-import { useAuth } from "@/components/AuthProvider";
-import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
+import { RadioButtonProps } from "react-native-radio-buttons-group";
 import RadioGroupComponent from "@/components/RadioGroup";
 import BallisticArrow from "../../components/BallisticArrow";
 import ConditionRadioBtns from "@/components/ConditionRadioBtns";
 import PutterScoreModal from "@/components/PutterScoreModal";
+import { useUserInfo } from "@/components/UserProvider";
 
 export type Shot = {
   club: string;
@@ -40,10 +26,9 @@ export type Putter = {
 };
 
 export default function GolfScoreCard() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const { userId, userInfo, handleUserId, handleUserInfo } = useUserInfo();
   const [selectedClub, setSelectedClub] = useState("クラブを選んでください");
-  const { authUser } = useAuth();
+  const { roundId } = useUserInfo();
   const [hole, setHole] = useState(1);
   const [strokes, setStrokes] = useState(1);
   const [leftFootSelectedId, setLeftFootSelectedId] = useState<
@@ -64,36 +49,6 @@ export default function GolfScoreCard() {
     setSelectedClub(value);
     console.log(value);
   };
-
-  useEffect(() => {
-    const fetchUserInfo = async (id: string) => {
-      const data = await getUserInfo(id);
-      setUserInfo(data as any);
-      console.log(data);
-    };
-
-    const checkUser = async () => {
-      if (authUser) {
-        const userId = await getUser(authUser.uid);
-        setUserId(userId || "");
-        if (!userId) {
-          const newUser = await createUser({
-            uid: authUser.uid,
-            userName: authUser.displayName || "",
-          });
-          console.log(newUser);
-          fetchUserInfo(newUser || "");
-          setUserId(newUser || "");
-        } else {
-          console.log(userId);
-          fetchUserInfo(userId);
-          setUserId(userId);
-        }
-      }
-    };
-
-    checkUser();
-  }, []);
 
   // radio button
   const upDownRadioBtn: RadioButtonProps[] = useMemo(
@@ -161,7 +116,7 @@ export default function GolfScoreCard() {
       leftFoot: leftFootSelectedId,
     };
     try {
-      await addShot(userId || "", shot);
+      await addShot(userId || "", shot, roundId);
       resetForm();
       setStrokes(strokes + 1);
     } catch (error) {
@@ -198,7 +153,7 @@ export default function GolfScoreCard() {
       strokes: putterScore || 0,
       hole: hole,
     };
-    addPutter(userId || "", putter);
+    addPutter(userId || "", putter, roundId);
     setHole(hole + 1);
     setStrokes(1);
     resetForm();
