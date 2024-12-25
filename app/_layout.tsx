@@ -37,7 +37,9 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider value={DefaultTheme}>
         <Stack>
+          <Stack.Screen name="(index)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="roundSetting" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar hidden={true} />
