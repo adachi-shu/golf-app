@@ -23,7 +23,7 @@ export default function TabTwoScreen() {
       {shots.map((shot, index) => (
         <Text key={index}>
           ホール{shot.hole}、{shot.strokes}打目、{shot.club},{" "}
-          {shot.startBallistic},{shot.endBallistic}
+          {shot.startBallistic},{shot.endBallistic},{shot.shotResult}
         </Text>
       ))}
     </View>

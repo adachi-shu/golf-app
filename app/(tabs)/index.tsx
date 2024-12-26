@@ -8,6 +8,7 @@ import BallisticArrow from "../../components/BallisticArrow";
 import ConditionRadioBtns from "@/components/ConditionRadioBtns";
 import PutterScoreModal from "@/components/PutterScoreModal";
 import { useUserInfo } from "@/components/UserProvider";
+import ResultBtns from "@/components/ResultBtns";
 
 export type Shot = {
   club: string;
@@ -18,12 +19,15 @@ export type Shot = {
   strokes: number;
   toe: string | undefined;
   leftFoot: string | undefined;
+  shotResult: ShotResult;
 };
 
 export type Putter = {
   strokes: number;
   hole: number;
 };
+
+export type ShotResult = "成功" | "トップ" | "ダフリ" | "シャンク" | "チーピン";
 
 export default function GolfScoreCard() {
   const { userId, userInfo, handleUserId, handleUserInfo } = useUserInfo();
@@ -44,6 +48,7 @@ export default function GolfScoreCard() {
   );
   const [condition, setCondition] = useState<string | undefined>(undefined);
   const [putterScore, setPutterScore] = useState<number | undefined>(undefined);
+  const [shotResult, setShotResult] = useState<ShotResult>("成功");
 
   const handleClubChange = (value: string) => {
     setSelectedClub(value);
@@ -114,6 +119,7 @@ export default function GolfScoreCard() {
       strokes: strokes,
       toe: toeSelectedId,
       leftFoot: leftFootSelectedId,
+      shotResult: shotResult,
     };
     try {
       await addShot(userId || "", shot, roundId);
@@ -134,6 +140,10 @@ export default function GolfScoreCard() {
 
   const handleCondition = (value: string) => {
     setCondition(value);
+  };
+
+  const handleShotResult = (value: ShotResult) => {
+    setShotResult(value);
   };
 
   const handlePutterScore = (value: number) => {
@@ -188,24 +198,11 @@ export default function GolfScoreCard() {
             onValueChange={handleClubChange}
           />
         </View>
-        <View style={styles.direction}>
-          <View style={styles.direction}>
-            <View style={styles.directionColumn}>
-              <BallisticArrow
-                selectedValue={startBallistic}
-                onPress={handleStartBallistic}
-              />
-              <BallisticArrow
-                selectedValue={endBallistic}
-                onPress={handleEndBallistic}
-              />
-            </View>
-          </View>
-          <View style={styles.distance}>
-            <Text style={styles.text}>飛距離</Text>
-            <TextInput style={styles.input} defaultValue="100" />
-            <Text style={styles.text}>Y</Text>
-          </View>
+        <View style={styles.buttons}>
+          <ConditionRadioBtns
+            onPress={handleCondition}
+            selectedValue={condition}
+          />
         </View>
         <View style={styles.directionColumn}>
           <Text style={styles.text}>つま先</Text>
@@ -233,11 +230,28 @@ export default function GolfScoreCard() {
             <Text style={styles.text}>上がり</Text>
           </View>
         </View>
-        <View style={styles.buttons}>
-          <ConditionRadioBtns
-            onPress={handleCondition}
-            selectedValue={condition}
-          />
+        <View style={styles.direction}>
+          <View style={styles.direction}>
+            <View style={styles.directionColumn}>
+              <BallisticArrow
+                selectedValue={startBallistic}
+                onPress={handleStartBallistic}
+              />
+              <BallisticArrow
+                selectedValue={endBallistic}
+                onPress={handleEndBallistic}
+              />
+            </View>
+          </View>
+          <View style={styles.distance}>
+            <Text style={styles.text}>飛距離</Text>
+            <TextInput style={styles.input} defaultValue="100" />
+            <Text style={styles.text}>Y</Text>
+          </View>
+        </View>
+        <View>
+          <Text>結果</Text>
+          <ResultBtns onPress={handleShotResult} selectedValue={shotResult} />
         </View>
         <View style={styles.footer}>
           <Button title="保存" onPress={handleShotSave} />
@@ -261,10 +275,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     paddingBottom: 100,
-    justifyContent: "space-between",
     width: "90%",
     maxWidth: 414,
     margin: "auto",
+    gap: 10,
   },
   header: {
     flexDirection: "row",

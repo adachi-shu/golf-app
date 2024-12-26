@@ -1,34 +1,27 @@
+import { ShotResult } from "@/app/(tabs)";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type Props = {
-  onPress: (value: string) => void;
-  selectedValue: string | undefined;
+  onPress: (value: ShotResult) => void;
+  selectedValue: ShotResult;
 };
 
-export const BallisticArrow = ({ onPress, selectedValue }: Props) => {
+const labels = ["成功", "トップ", "ダフリ", "シャンク", "チーピン"];
+
+export default function ResultBtns({ onPress, selectedValue }: Props) {
   return (
     <View style={styles.container}>
-      <CustomRadioButton
-        label="↖"
-        selected={selectedValue === "↖"}
-        onSelect={() => onPress("↖")}
-      />
-      <CustomRadioButton
-        label="↑"
-        selected={selectedValue === "↑"}
-        onSelect={() => onPress("↑")}
-      />
-      <CustomRadioButton
-        label="↗"
-        selected={selectedValue === "↗"}
-        onSelect={() => onPress("↗")}
-      />
+      {labels.map((label) => (
+        <CustomRadioButton
+          label={label}
+          selected={selectedValue === label}
+          onSelect={() => onPress(label as ShotResult)}
+        />
+      ))}
     </View>
   );
-};
-
-export default BallisticArrow;
+}
 
 const CustomRadioButton = ({
   label,
@@ -47,7 +40,7 @@ const CustomRadioButton = ({
     onPress={onSelect}
   >
     <Text
-      style={[styles.radioButtonText, { color: selected ? "#000" : "#000" }]}
+      style={[styles.radioButtonText, { color: selected ? "#FFF" : "#000" }]}
     >
       {label}
     </Text>
@@ -66,7 +59,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    marginVertical: 8,
+    marginVertical: 2,
     borderWidth: 1,
     borderColor: "#007BFF",
     flexDirection: "row",
@@ -74,6 +67,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   radioButtonText: {
-    fontSize: 16,
+    fontSize: 12,
   },
 });
